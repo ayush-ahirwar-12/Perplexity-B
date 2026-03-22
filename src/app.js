@@ -2,12 +2,19 @@ import express from "express";
 import cookie from "cookie-parser"
 import AuthRoute from "./routes/auth.route.js"
 import cors from "cors"
+import morgan from "morgan";
+
+
+
+
 const app = express();
 
 
 
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(morgan("dev"))
 app.use(cookie());
 app.use(cors({
     origin:"http://localhost:3000",
