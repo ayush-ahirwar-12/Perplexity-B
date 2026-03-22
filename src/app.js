@@ -3,6 +3,7 @@ import cookie from "cookie-parser"
 import AuthRoute from "./routes/auth.route.js"
 import cors from "cors"
 import morgan from "morgan";
+import ChatRoute from "./routes/chat.route.js"
 
 
 
@@ -23,6 +24,8 @@ app.use(cors({
 
 
 app.use("/api/auth",AuthRoute);
+app.use("/api/chats",ChatRoute);
+
 
 
 
