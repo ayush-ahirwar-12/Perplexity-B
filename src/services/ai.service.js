@@ -9,9 +9,7 @@ class aiService {
         this.mongoChatRepository = new mongoChatRepository();
     }
 
-
-
-    async generateResponse(userId,message) {
+    async generateResponse(chatId,message) {
         if (!message) {
             throw new AppError("Message is required to generate a response", 404);
         }
@@ -21,11 +19,18 @@ class aiService {
         if (!response || !response.text) {
             throw new AppError("Failed to generate a response", 500);
         }
+        let savedMessage = await this.mongoChatRepository.generateMessageResponse(chatId,response.text);
+        if (!savedMessage) {
+            throw new AppError("Failed to save the message response", 500);
+        }
 
-        return response.text;
+        return savedMessage;
     }
 
-    async generateChatTitle(UserIdmessage) {
+    async generateChatTitle(UserId, message) {
+         if (!message) {
+            throw new AppError("Message is required to generate a response", 404);
+        }
         let response = await MistralModel.invoke([
             new SystemMessage(`Generate a concise and descriptive title for the following chat message 
                 
@@ -35,7 +40,11 @@ class aiService {
                 Here is the first message of the chat
             `), new HumanMessage(`Generate a title for this message : ${message}`)
         ])
-        return response.text;
+        const chat = await this.mongoChatRepository.generateChatResponse(UserId, response.text);
+        if (!chat) {
+            throw new AppError("Failed to save the chat response", 500);
+        }
+        return chat;
     }
 }
 

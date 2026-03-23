@@ -8,14 +8,14 @@ class chatController {
         try {
             let { message } = req.body;
             let userId = req.userId;
-            let chat = await this.aiService.generateChatTitle(userId, message);
+            let chatTitle = await this.aiService.generateChatTitle(userId, message);
 
-            let result = await this.aiService.generateResponse(message);
+            let AiMessage = await this.aiService.generateResponse(chatTitle._id,message);
 
             res.status(201).json({
                 success: true,
-                title:chat.title,
-                Airesponse: result.text
+                chatTitle,
+                AiMessage
             })
         } catch (error) {
             next(error)
