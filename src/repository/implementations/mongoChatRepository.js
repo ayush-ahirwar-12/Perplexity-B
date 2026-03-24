@@ -11,14 +11,23 @@ class mongoChatRepository extends IChatRepository {
             }
         )
     }
+    async generateUserMessage(chatId, content) {
+        return await MessageModel.create({
+            chatId,
+            content,
+            role: "user"
+        });
+    }
+
     async generateMessageResponse(chatId,content) {
-        // This method is a placeholder for generating a message response and can be implemented as needed.
-        // For example, you could save the message to the database or perform other operations.
         return await MessageModel.create({
             chatId,
             content,
             role:"ai"
         });
+    }
+    async getAllMessagesByChatId(chatId) {
+        return await MessageModel.find({ chatId });
     }
 }
 export default mongoChatRepository;

@@ -1,5 +1,5 @@
 import { ChatMistralAI } from "@langchain/mistralai";
-import { HumanMessage, SystemMessage } from "langchain";
+import { HumanMessage, SystemMessage,AIMessage } from "langchain";
 import { AppError } from "../utils/error.js";
 import { MistralModel } from "../llm/AiModels.js";
 import mongoChatRepository from "../repository/implementations/mongoChatRepository.js";
@@ -9,13 +9,29 @@ class aiService {
         this.mongoChatRepository = new mongoChatRepository();
     }
 
-    async generateResponse(chatId,message) {
-        if (!message) {
-            throw new AppError("Message is required to generate a response", 404);
+    async generateResponse(chatId,messages) {
+        if (!messages || !Array.isArray(messages)) {
+            throw new AppError("Message array is required to generate a response", 404);
         }
-        const response = await MistralModel.invoke([
-            new HumanMessage(message)
-        ])
+
+        if (messages.length === 0) {
+            // Nothing in chat history yet, caller should provide the user prompt.
+            throw new AppError("Message array cannot be empty", 404);
+        }
+
+        const preparedMessages = messages.map((msg) => {
+            if (msg.role === "user") {
+                return new HumanMessage(msg.content);
+            } else if (msg.role === "ai") {
+                return new AIMessage(msg.content);
+            } else if (msg.role === "system") {
+                return new SystemMessage(msg.content);
+            }
+            throw new AppError(`Unsupported message role: ${msg.role}`, 400);
+        });
+
+        const response = await MistralModel.invoke(preparedMessages);
+
         if (!response || !response.text) {
             throw new AppError("Failed to generate a response", 500);
         }
