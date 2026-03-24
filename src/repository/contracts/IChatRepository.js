@@ -11,6 +11,9 @@ class IChatRepository {
     async getAllMessagesByChatId(chatId) {
         throw new Error('Method not implemented');
     }
+    async getAllChatsOfUser(userId) {
+        throw new Error('Method not implemented');
+    }
 }
 
 export default IChatRepository;

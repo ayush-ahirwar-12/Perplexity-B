@@ -62,6 +62,13 @@ class aiService {
         }
         return chat;
     }
+
+    async getAllChats(userId){
+        if(!userId){
+            throw new AppError("user id not provided");
+        }
+        return await this.mongoChatRepository.getAllChatsOfUser(userId);
+    }
 }
 
 export default aiService;
