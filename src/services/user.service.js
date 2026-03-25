@@ -51,7 +51,7 @@ class UserService {
       throw new Error("Email already exists", 409);
     };
 
-    const user = await this.UserRepository.createUser({ ...data, email });
+    const user = await this.UserRepository.createUser({ ...data, email });    
 
     const userWithRole = await this.UserRepository.findUserbyId(user._id);
 
